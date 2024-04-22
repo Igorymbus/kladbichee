@@ -1,7 +1,4 @@
-import java.util.Arrays;
 import java.util.Scanner;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Main {
 
@@ -23,6 +20,17 @@ public class Main {
             System.out.println("Кладбище было уничтожено. Теперь здесь ничего нет.");
         }
     }
+
+    public void additionalActionsOnDestroy() {
+        // Дополнительные действия, которые могут выполняться при разрушении кладбища
+        System.out.println("Все ворота кладбища заколочены. Никто не покинет это место.");
+    }
+
+    public void printAdditionalGraveyardHistory() {
+        // Дополнительная информация при выводе истории кладбища
+        System.out.println("В давние времена на кладбище происходили странные события...");
+    }
+
     public static void displayEmployees(String[][] employees) {
         System.out.println("Люди на кладбище:");
         for (String[] employee : employees) {
@@ -46,7 +54,7 @@ public class Main {
         };
         int choice = 0;
 
-        while (choice != 5) {
+        while (choice != 10) {
             System.out.println("Меню:");
             System.out.println("1. Кто есть на кладбище");
             System.out.println("2. Уничтожить кладбище");
@@ -55,32 +63,36 @@ public class Main {
             System.out.println("5. Добавить могилу на кладбище");
             System.out.println("6. Обновить информацию о могиле");
             System.out.println("7. История могил");
-            System.out.println("8. Выход");
-            System.out.println("9. ...здесь");
-            System.out.println("10. ...Я");
+            System.out.println("8. Кремация сотрудника");
+            System.out.println("9. Воскрешение сотрудника");
+            System.out.println("10. Выход");
 
             System.out.print("Выберите действие: ");
             choice = scanner.nextInt();
 
             switch (choice) {
                 case 1:
-                    main.displayEmployees(employees);
+                    Main.displayEmployees(employees);
                     break;
                 case 2:
                     main.destroyGraveyard();
+                    main.additionalActionsOnDestroy(); // Дополнительные действия при разрушении кладбища
                     break;
                 case 3:
                     main.printGraveyardHistory();
+                    main.printAdditionalGraveyardHistory(); // Дополнительная информация при выводе истории кладбища
                     break;
                 case 4:
                     // Для вызова нестатической функции visitGraveyard() необходимо создать объект класса Main
                     Main graveVisitor = new Main();
                     graveVisitor.visitGraveyard();
+                    main.additionalActionsOnVisitGraveyard(); // Дополнительные действия при посещении кладбища
                     break;
                 case 5:
                     // Для вызова нестатической функции addGraveToGraveyard() необходимо создать объект класса Main
                     Main graveAdder = new Main();
                     graveAdder.addGraveToGraveyard();
+                    main.additionalActionsOnAddGrave(); // Дополнительные действия при добавлении новой могилы
                     break;
                 case 6:
                     // Для вызова нестатической функции updateGraveDetails() необходимо создать объект класса Main
@@ -91,12 +103,13 @@ public class Main {
                     main.GraveyardInfo(main.graves);
                     break;
                 case 8:
-                    System.out.println ("Все ворота кладбища заколочены. Никто не покинет это место. Я ОСТАНУСЬ ЗДЕСЬ НАВСЕГДА!"); break;
+                    main.cremateEmployee(employees);
+                    break;
                 case 9:
-                    main.additionalActionsOnDestroy();
+                    main.resurrectEmployee(employees);
                     break;
                 case 10:
-                    main.additionalActionsOnVisitGraveyard();
+                    System.out.println("Конец...");
                     break;
                 default:
                     System.out.println("Неверный выбор. Пожалуйста, выберите еще раз.");
@@ -167,15 +180,67 @@ public class Main {
             System.out.println("Имя похороненного: " + grave[0]);
             System.out.println("Дата смерти: " + grave[1]);
             System.out.println("Описание: " + grave[2]);
-            System.out.println();
+            System.out.println(); // Добавляем пустую строку для разделения информации о могилах
         }
     }
-    public void additionalActionsOnDestroy() {
-        // Дополнительные действия, которые могут выполняться при разрушении кладбища
-        System.out.println("Это место проклято, я не должен был здесь быть");
-    }
+
     public void additionalActionsOnVisitGraveyard() {
         // Дополнительные действия, которые могут выполняться при посещении кладбища
         System.out.println("Я почувствовал холод, когда переступил порог кладбища. Мрачная атмосфера окутывает меня.");
+    }
+
+    public void additionalActionsOnAddGrave() {
+        // Дополнительные действия, которые могут выполняться при добавлении новой могилы
+        System.out.println("Снова одна душа присоединилась к множеству в этом безжизненном мире.");
+    }
+
+    public void resurrectEmployee(String[][] employees) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите имя умершего для воскрешения: ");
+        String nameToResurrect = scanner.nextLine();
+        boolean found = false;
+
+        for (int i = 0; i < employees.length; i++) {
+            if (nameToResurrect.equalsIgnoreCase(employees[i][0]) &&
+                    "Скремирован".equalsIgnoreCase(employees[i][1])) {
+
+                System.out.println("Похороненный " + employees[i][0] + " был воскрешен.");
+
+                // Воскрешаем умершего и возвращаем в массив
+                employees[i][1] = employees[i][0];
+
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Невозможно воскресить умершего с именем " + nameToResurrect + ".");
+        }
+    }
+
+
+
+
+    public void cremateEmployee(String[][] employees) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите имя сотрудника для кремации: ");
+        String nameToCremate = scanner.nextLine();
+        boolean found = false;
+
+        for (int i = 0; i < employees.length; i++) {
+            if (nameToCremate.equalsIgnoreCase(employees[i][0])) {
+                System.out.println("Сотрудник " + employees[i][0] + " был сожжён заживо. ХЕХЕХЕ");
+                // Удаляем похороненного из массива
+                employees[i][0] = "ЗАКОНСЕРВИРОВАН"; // Маркируем как скремирован
+                employees[i][1] = "ЗАКОНСЕРВИРОВАН"; // Маркируем как скремирован
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Рабочий с именем " + nameToCremate + " не найден.");
+        }
     }
 }
